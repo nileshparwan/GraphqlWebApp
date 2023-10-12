@@ -1,13 +1,15 @@
 import express from 'express';
 import { graphqlHTTP } from 'express-graphql';
+
 // internal
 import schema from '@schema/schema';
-// variables
-const app = express();
-console.log(schema);
 
-// middleware
-app.use(
+export const init = async () => {
+  // variables
+  const app = express();
+
+  // middleware
+  app.use(
     "/graphql",
     graphqlHTTP({
       schema,
@@ -15,6 +17,5 @@ app.use(
     })
   )
 
-app.listen(4000, () => {
-    console.log('app running on port 4000');
-})
+  return app;
+}
