@@ -11,6 +11,12 @@
     "paths": {
       "@schema/*": [
         "src/schema/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@interfaces": [
+        "src/interfaces/index.ts"
       ]
     },
   },
