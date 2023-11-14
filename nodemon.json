@@ -1,15 +1,3 @@
 {
-  "watch": [
-    "src/**/*.ts",
-    "**/*.ts"
-  ],
-  "ext": "ts,json",
-  "ignore": [
-    "src/**/*.spec.ts",
-    "src/public"
-  ],
-  "exec": "ts-node -r tsconfig-paths/register ./src",
-  "env": {
-    "NODE_ENV": "development"
-  }
+    "exec": "babel-node src/index.js"
 }

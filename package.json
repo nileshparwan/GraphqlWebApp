@@ -2,41 +2,31 @@
   "name": "graphql",
   "version": "1.0.0",
   "main": "server.ts",
-  "author": "",
-  "license": "ISC",
+  "author": "Koshal Parwan",
+  "license": "MIT",
+  "keywords": [
+    "graphql",
+    "graphQL",
+    "Babel",
+    "Node.js"
+  ],
+  "description": "",
   "scripts": {
-    "clean": "rm -fr dist",
-    "watch:ts": "tsc --watch",
-    "build": "tsc --build tsconfig.prod.json",
-    "json:server": "json-server --watch db.json",
-    "server:production": "npm run build && npm start",
-    "server:development": "nodemon --config nodemon.json",
-    "start": "node -r module-alias/register ./dist --env=production"
+    "start": "nodemon"
   },
-  "_moduleAliases": {
-    "@schema": "dist/schema",
-    "@utils": "dist/utils",
-    "@interfaces": "dist/interfaces/index.js"
-  },
+  "_moduleAliases": {},
   "dependencies": {
-    "axios": "^1.5.1",
+    "@babel/core": "^7.23.3",
+    "@babel/node": "^7.22.19",
+    "@babel/preset-env": "^7.23.3",
     "express": "^4.18.2",
-    "express-graphql": "^0.12.0",
-    "graphql": "^15.8.0",
-    "json-server": "^0.17.4",
-    "lodash": "^4.17.21",
-    "module-alias": "^2.2.3",
     "ramda": "^0.29.1"
   },
   "devDependencies": {
-    "@types/express": "^4.17.19",
-    "@types/node": "^20.8.4",
-    "@types/ramda": "^0.29.6",
-    "nodemon": "^3.0.1",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.2.2"
+    "nodemon": "^3.0.1"
   },
-  "keywords": [],
-  "description": ""
+  "engines": {
+    "node": ">=14.0.0",
+    "yarn": ">=1.20.0"
+  }
 }
