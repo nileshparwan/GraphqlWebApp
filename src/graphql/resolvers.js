@@ -1,16 +1,36 @@
 export const resolvers = {
+    // Query: {
+    //     id() {
+    //         return 'abc12';
+    //     },
+    //     name() {
+    //         return 'koshal';
+    //     },
+    //     age() {
+    //         return 23;
+    //     },
+    //     employed() {
+    //         return true;
+    //     },
+    //     gpa() {
+    //         return 2.1; // can also be null
+    //     }
+    // },
     Query: {
-        hello() {
-            return 'this is my first query';
+        title() {
+            return 'title';
         },
-        name() {
-            return "hello world";
+        price() {
+            return 50;
         },
-        location() {
-            return "this is my location";
+        releaseYear() {
+            return null;
         },
-        bio() {
-            return "this is my bio";
+        rating() {
+            return 5.0;
+        },
+        inStock() {
+            return true;
         }
     }
 };
