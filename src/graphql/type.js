@@ -7,7 +7,8 @@ export const typeDefs = /* GraphQL */ `
     type Query {
         me: User!
         post: Post!
-        add(a: Float!, b: Float!): Float!
+        grades: [Int!]!
+        add(numbers: [Float!]!): Float!
         product(id: String): Product
         greeting(name: String, position: String): String!
         productionCollection(where: productInput, limit: Int): [ProductCollection]

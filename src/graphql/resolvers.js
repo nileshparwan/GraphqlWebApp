@@ -29,8 +29,19 @@ export const resolvers = {
             }
             return "hello";
         },
-        add(parent, { a, b }, ctx, info) {
-            return a + b;
+        add(parent, { numbers }, ctx, info) {
+            if (numbers.length === 0) {
+                return 0;
+            }
+
+            // [1, 5 ,10]
+            // accumator = 1, 6, 16
+            return numbers.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue;
+            });
+        },
+        grades(parent, args, ctx, info) {
+            return [99, 80, 93];
         }
     },
 };
