@@ -1,17 +1,15 @@
 /*
  * there are 5 type definitions 
- *   - String, Boolean, Int, Float, ID
+ *   scalor = String, Boolean, Int, Float, ID
  * 
 */
 export const typeDefs = /* GraphQL */ `
     type Query {
         me: User!
-        post: Post!
-        grades: [Int!]!
-        add(numbers: [Float!]!): Float!
-        product(id: String): Product
-        greeting(name: String, position: String): String!
-        productionCollection(where: productInput, limit: Int): [ProductCollection]
+        post(query: String): [Post!]!
+        users(query: String): [User!]! 
+        # product(id: String): Product
+        # productionCollection(where: productInput, limit: Int): [ProductCollection]
     }
 
     input productInput {
@@ -24,18 +22,7 @@ export const typeDefs = /* GraphQL */ `
         name: String!
         age: Int!
         email: String!
-    }
-
-    type Product {
-        title: String!
-        price: Float!
-        releaseYear: Int
-        rating: Float
-        inStock: Boolean!
-    }
-
-    type ProductCollection {
-        items: [Product]
+        posts: [Post!]!
     }
 
     type Post {
@@ -43,5 +30,18 @@ export const typeDefs = /* GraphQL */ `
         title: String!
         body: String!
         published: Boolean!
+        author: User!
     }
+
+    # type Product {
+    #     title: String!
+    #     price: Float!
+    #     releaseYear: Int
+    #     rating: Float
+    #     inStock: Boolean!
+    # }
+
+    # type ProductCollection {
+    #     items: [Product]
+    # }
 `;
