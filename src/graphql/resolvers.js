@@ -1,5 +1,24 @@
 import { compose, equals, filter, find, includes, pipe, prop, toLower } from "ramda";
 
+const comments = [
+    {
+        id: 1,
+        text: "comments"
+    },
+    {
+        id: 2,
+        text: "more comments"  
+    },
+    {
+        id: 3,
+        text: "more more comments"  
+    },
+    {
+        id: 4,
+        text: "more more more comments"  
+    }
+];
+
 const users = [
     {
         id: 1,
@@ -87,6 +106,9 @@ export const resolvers = {
                 )(user);
                 return name;
             })(users);
+        },
+        comments(parent, args, ctx, info){
+            return comments;
         }
     },
     // has to match the type name

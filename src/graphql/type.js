@@ -7,7 +7,8 @@ export const typeDefs = /* GraphQL */ `
     type Query {
         me: User!
         post(query: String): [Post!]!
-        users(query: String): [User!]! 
+        users(query: String): [User!]!
+        comments: [Comment!]!
         # product(id: String): Product
         # productionCollection(where: productInput, limit: Int): [ProductCollection]
     }
@@ -31,6 +32,11 @@ export const typeDefs = /* GraphQL */ `
         body: String!
         published: Boolean!
         author: User!
+    }
+
+    type Comment {
+        id: ID!
+        text: String!
     }
 
     # type Product {
