@@ -24,6 +24,7 @@ export const typeDefs = /* GraphQL */ `
         age: Int!
         email: String!
         posts: [Post!]!
+        comments: [Comment!]!
     }
 
     type Post {
@@ -37,6 +38,7 @@ export const typeDefs = /* GraphQL */ `
     type Comment {
         id: ID!
         text: String!
+        author: User!
     }
 
     # type Product {

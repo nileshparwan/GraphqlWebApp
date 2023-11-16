@@ -3,19 +3,23 @@ import { compose, equals, filter, find, includes, pipe, prop, toLower } from "ra
 const comments = [
     {
         id: 1,
-        text: "comments"
+        text: "comments",
+        author: 1
     },
     {
         id: 2,
-        text: "more comments"  
+        text: "more comments",
+        author: 1
     },
     {
         id: 3,
-        text: "more more comments"  
+        text: "more more comments",
+        author: 2
     },
     {
         id: 4,
-        text: "more more more comments"  
+        text: "more more more comments",
+        author: 2
     }
 ];
 
@@ -107,7 +111,7 @@ export const resolvers = {
                 return name;
             })(users);
         },
-        comments(parent, args, ctx, info){
+        comments(parent, args, ctx, info) {
             return comments;
         }
     },
@@ -134,9 +138,34 @@ export const resolvers = {
                     parseInt(parent.id)
                 )
             );
-
-            const getpost = filter(filterByPost)(posts)
-            return getpost;    
+            const getpost = filter(filterByPost)(posts);
+            return getpost;
+        },
+        comments(parent, args, ctx, info) {
+            const authorId = prop('id', parent);
+            const filterAuthor = pipe(
+                prop('author'),
+                (idAuther) => equals(
+                    parseInt(idAuther),
+                    parseInt(authorId)
+                )
+            );
+            return filter(filterAuthor)(comments)
+        }
+    },
+    Comment: {
+        author(parent, args, ctx, info) {
+            const authorId = prop('author', parent);
+            const user = pipe(
+                prop('id'),
+                currentId => equals(
+                    parseInt(currentId),
+                    parseInt(authorId)
+                )
+            );
+            const getUser = find(user)(users);
+            console.log(getUser)
+            return getUser;
         }
     }
 };
