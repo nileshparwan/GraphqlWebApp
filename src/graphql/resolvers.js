@@ -4,22 +4,26 @@ const comments = [
     {
         id: 1,
         text: "comments",
-        author: 1
+        author: 1,
+        post: "092"
     },
     {
         id: 2,
         text: "more comments",
-        author: 1
+        author: 1,
+        post: "093"
     },
     {
         id: 3,
         text: "more more comments",
-        author: 2
+        author: 2,
+        post: "094"
     },
     {
         id: 4,
         text: "more more more comments",
-        author: 2
+        author: 2,
+        post: "094"
     }
 ];
 
@@ -127,6 +131,17 @@ export const resolvers = {
             );
             const author = find(userIsMatchingFn)(users);
             return author;
+        },
+        comments(parent, args, ctx, info) {
+            const currentPostId = prop('id')(parent);
+            const filterPosts = pipe(
+                prop("post"),
+                postId => equals(
+                    postId,
+                    currentPostId
+                )
+            )
+            return filter(filterPosts)(posts);
         }
     },
     User: {
@@ -166,6 +181,15 @@ export const resolvers = {
             const getUser = find(user)(users);
             console.log(getUser)
             return getUser;
+        },
+        post(parent, args, ctx, info) {
+            const currentPostId = prop('post', parent);
+            const findPost = pipe(
+                prop('post'),
+                idPost => equals(idPost, currentPostId)
+            );
+            let allPosts = find(findPost)(Comment)
+            return allPosts;
         }
     }
 };
