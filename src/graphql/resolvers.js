@@ -1,4 +1,6 @@
+import { GraphQLError } from 'graphql';
 import { compose, equals, filter, find, includes, pipe, prop, toLower } from "ramda";
+import { v4 as uuidv4 } from 'uuid';
 
 const comments = [
     {
@@ -119,6 +121,30 @@ export const resolvers = {
             return comments;
         }
     },
+    Mutation: {
+        createUser(parent, args, ctx, info) {
+            let newUser;
+
+            const emailTaken = users.some(user => {
+                return user.email === args.email;
+            });
+
+            if (emailTaken) {
+                throw new GraphQLError(`Email exist`);
+            }
+
+            newUser = {
+                id: uuidv4,
+                name: args.name,
+                email: args.email,
+                age: args.age
+            };
+
+            users.push(newUser);
+
+            return newUser;
+        }
+    },
     // has to match the type name
     Post: {
         author(parent, args, ctx, info) {
@@ -140,7 +166,7 @@ export const resolvers = {
                     postId,
                     currentPostId
                 )
-            )
+            );
             return filter(filterPosts)(posts);
         }
     },
@@ -165,7 +191,7 @@ export const resolvers = {
                     parseInt(authorId)
                 )
             );
-            return filter(filterAuthor)(comments)
+            return filter(filterAuthor)(comments);
         }
     },
     Comment: {
@@ -179,7 +205,7 @@ export const resolvers = {
                 )
             );
             const getUser = find(user)(users);
-            console.log(getUser)
+            console.log(getUser);
             return getUser;
         },
         post(parent, args, ctx, info) {
@@ -188,7 +214,7 @@ export const resolvers = {
                 prop('post'),
                 idPost => equals(idPost, currentPostId)
             );
-            let allPosts = find(findPost)(Comment)
+            let allPosts = find(findPost)(Comment);
             return allPosts;
         }
     }

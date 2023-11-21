@@ -13,6 +13,10 @@ export const typeDefs = /* GraphQL */ `
         # productionCollection(where: productInput, limit: Int): [ProductCollection]
     }
 
+    type Mutation {
+        createUser(name: String!, email: String!, age: Int): User!
+    }
+
     input productInput {
         id: String!
         name: String
