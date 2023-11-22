@@ -1,5 +1,5 @@
 import { GraphQLError } from 'graphql';
-import { compose, equals, filter, find, includes, pipe, prop, toLower } from "ramda";
+import { any, append, compose, equals, filter, find, identity, includes, pipe, prop, propEq, propOr, propSatisfies, toLower, where } from "ramda";
 import { v4 as uuidv4 } from 'uuid';
 
 const comments = [
@@ -55,7 +55,7 @@ const posts = [
         id: "092",
         title: "102",
         body: "bnjk",
-        published: false,
+        published: true,
         author: '1'
     },
     {
@@ -143,6 +143,60 @@ export const resolvers = {
             users.push(newUser);
 
             return newUser;
+        },
+        createPost(parent, args, ctx, info) {
+            const theUser = pipe(
+                prop('id'),
+                equals(parseInt(args.author))
+            );
+
+            const userExists = find(theUser)(users);
+
+            if (!userExists) {
+                throw new GraphQLError('Author not found');
+            }
+
+            const newPost = {
+                id: uuidv4(),
+                title: args.title,
+                body: args.body,
+                published: args.published,
+                author: args.author
+            };
+
+            posts.push(newPost);
+
+            return newPost;
+        },
+        createComment(parent, args, ctx, info) {
+            const autherId = prop('author')(args);
+            const postId = prop('post')(args);
+
+            const userExists = any(where({ id: equals(parseInt(autherId)) }), users);
+
+            if (!userExists) {
+                throw new GraphQLError(`Author does not exists`);
+            }
+
+            const postExistsAndPublished = any(where({
+                id: equals(postId),
+                published: equals(true)
+            }), posts)
+
+            if (!postExistsAndPublished) {
+                throw new GraphQLError(`Post does not exists or is not published`);
+            }
+
+            const newComment = {
+                id: uuidv4(),
+                text: args.text,
+                author: args.author,
+                post: args.post
+            };
+
+            comments.push(newComment);
+
+            return newComment;
         }
     },
     // has to match the type name
