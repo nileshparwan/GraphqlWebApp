@@ -1,8 +1,8 @@
 import { GraphQLError } from 'graphql';
-import { any, append, compose, equals, filter, find, identity, includes, pipe, prop, propEq, propOr, propSatisfies, toLower, where } from "ramda";
+import { any, compose, equals, filter, find, findIndex, head, includes, not, pipe, prop, propEq, propOr, propSatisfies, toLower, toString, where } from "ramda";
 import { v4 as uuidv4 } from 'uuid';
 
-const comments = [
+let comments = [
     {
         id: 1,
         text: "comments",
@@ -29,7 +29,7 @@ const comments = [
     }
 ];
 
-const users = [
+let users = [
     {
         id: 1,
         name: "koshal",
@@ -50,7 +50,7 @@ const users = [
     }
 ];
 
-const posts = [
+let posts = [
     {
         id: "092",
         title: "102",
@@ -140,6 +140,35 @@ export const resolvers = {
 
             return newUser;
         },
+        deleteUser: (parents, args, ctx, info) => {
+            const userId = prop('id')(args);
+            const userIndexFn = pipe(
+                prop('id'),
+                toString,
+                equals(userId)
+            )
+            const userIndex = findIndex(userIndexFn)(users);
+            if(userIndex < 0){
+                throw new GraphQLError("User not found");
+            }
+            
+            const deletedUser = users.splice(userIndex, 1);
+
+            posts = filter(post => {
+                const match = post.author == args.id;
+
+                // if(match){
+                //     comments = filter(comment => comment.post != post.id)(comments);
+                //     console.log(">>", comments)
+                // }
+
+                return !match;
+            })(posts)
+
+            comments = filter(comment => comment.author != args.id)(comments);
+            console.log(comments);
+            return head(deletedUser);
+        },
         createPost(parent, args, ctx, info) {
             const theUser = pipe(
                 prop('id'),
@@ -160,6 +189,35 @@ export const resolvers = {
             posts.push(newPost);
 
             return newPost;
+        },
+        deletePost: (parents, args, ctx, info) => {
+            const postId = prop('id')(args);
+            const postIndex = findIndex(
+                pipe(
+                    prop('id'),
+                    equals(postId)
+                )
+            )(posts);
+            if (postIndex < 0) {
+                throw new GraphQLError('Post does not exist')
+            }
+
+            const deletedPost = posts.splice(postIndex, 1);
+
+            posts = filter(post => {
+                const match = post.id == postId;
+                // if (match) {
+                //     comments = filter(comment => {
+                //         return comment.post != post.id;
+                //     })(comments);
+                // }   
+                return !match;
+            })(posts)
+            
+            comments = filter(comment => comment.post != args.id)(comments);
+
+            return head(deletedPost);
+
         },
         createComment(parent, args, ctx, info) {
             const autherId = prop('author')(args.data);
@@ -188,6 +246,21 @@ export const resolvers = {
             comments.push(newComment);
 
             return newComment;
+        },
+        deleteComment: (parent, args, ctx, info) => {
+            const commentId = prop('id')(args);
+            const commentIndex = findIndex(
+                pipe(
+                    prop('id'),
+                    equals(parseInt(commentId))
+                )
+            )(comments);
+
+            if (commentIndex < 0) {
+                throw new GraphQLError("Couldn't find the comment");
+            }
+            const deletedComment = comments.splice(commentIndex, 1);
+            return head(deletedComment);
         }
     },
     // has to match the type name
