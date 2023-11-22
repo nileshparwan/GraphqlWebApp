@@ -135,9 +135,7 @@ export const resolvers = {
 
             newUser = {
                 id: uuidv4,
-                name: args.name,
-                email: args.email,
-                age: args.age
+                ...args
             };
 
             users.push(newUser);
@@ -158,10 +156,7 @@ export const resolvers = {
 
             const newPost = {
                 id: uuidv4(),
-                title: args.title,
-                body: args.body,
-                published: args.published,
-                author: args.author
+                ...args
             };
 
             posts.push(newPost);
@@ -189,9 +184,7 @@ export const resolvers = {
 
             const newComment = {
                 id: uuidv4(),
-                text: args.text,
-                author: args.author,
-                post: args.post
+                ...args
             };
 
             comments.push(newComment);
