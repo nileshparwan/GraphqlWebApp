@@ -10,16 +10,35 @@ export const typeDefs = /* GraphQL */ `
         users(query: String): [User!]!
         comments: [Comment!]!
         # product(id: String): Product
-        # productionCollection(where: productInput, limit: Int): [ProductCollection]
+        # productionCollection(where: ProductInput, limit: Int): [ProductCollection]
     }
 
     type Mutation {
-        createUser(name: String!, email: String!, age: Int): User!
-        createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
-        createComment(text:String!, author: ID!, post: ID!): Comment!
+        createUser(data: CreateUserInput): User!
+        createPost(data: CreatePostInput): Post!
+        createComment(data: CreateCommentInput): Comment!
     }
 
-    input productInput {
+    input CreateCommentInput {
+        text:String!
+        author: ID!
+        post: ID!
+    }
+
+    input CreateUserInput {
+        name: String!
+        email: String!
+        age: Int
+    }
+
+    input CreatePostInput {
+        title: String!,
+        body: String!
+        published: Boolean!
+        author: ID!
+    }
+
+    input ProductInput {
         id: String!
         name: String
     }

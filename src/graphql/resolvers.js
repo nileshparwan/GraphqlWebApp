@@ -125,17 +125,15 @@ export const resolvers = {
         createUser(parent, args, ctx, info) {
             let newUser;
 
-            const emailTaken = users.some(user => {
-                return user.email === args.email;
-            });
+            const emailExists = any(where({ email: equals(args.data.email) }), users)
 
-            if (emailTaken) {
+            if (emailExists) {
                 throw new GraphQLError(`Email exist`);
             }
 
             newUser = {
-                id: uuidv4,
-                ...args
+                id: uuidv4(),
+                ...args.data
             };
 
             users.push(newUser);
@@ -145,7 +143,7 @@ export const resolvers = {
         createPost(parent, args, ctx, info) {
             const theUser = pipe(
                 prop('id'),
-                equals(parseInt(args.author))
+                equals(parseInt(args.data.author))
             );
 
             const userExists = find(theUser)(users);
@@ -156,7 +154,7 @@ export const resolvers = {
 
             const newPost = {
                 id: uuidv4(),
-                ...args
+                ...args.data
             };
 
             posts.push(newPost);
@@ -164,8 +162,8 @@ export const resolvers = {
             return newPost;
         },
         createComment(parent, args, ctx, info) {
-            const autherId = prop('author')(args);
-            const postId = prop('post')(args);
+            const autherId = prop('author')(args.data);
+            const postId = prop('post')(args.data);
 
             const userExists = any(where({ id: equals(parseInt(autherId)) }), users);
 
@@ -184,7 +182,7 @@ export const resolvers = {
 
             const newComment = {
                 id: uuidv4(),
-                ...args
+                ...args.data
             };
 
             comments.push(newComment);
