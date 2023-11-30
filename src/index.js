@@ -1,11 +1,18 @@
+import fs from 'fs';
+import path from 'path';
 import { init } from "./server";
 import { graphqlSchema } from './graphql/schema';
-import { typeDefs } from './graphql/type';
-import { resolvers } from './graphql/resolvers';
+import resolvers from './graphql';
+
+const readTypeDefs = fs.readFileSync(path.join(__dirname, '/graphql/schema.gql'), 'utf8');
+const gqlServer = graphqlSchema({
+    typeDefs: readTypeDefs,
+    resolvers: resolvers,
+    logging: false
+});
 
 const startServer = async () => {
     const app = await init();
-    const gqlServer = graphqlSchema({ typeDefs, resolvers, logging: false });
 
     // middleware
     app.use(gqlServer.graphqlEndpoint, gqlServer);
