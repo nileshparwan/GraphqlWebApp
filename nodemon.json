@@ -1,3 +1,11 @@
 {
-    "exec": "babel-node src/index.js"
+    "watch": ["src"],
+    "ext": "js, json, gql",
+    "exec": "babel-node src/index.js",
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "ignore": [
+        "node_modules"
+    ]
 }
