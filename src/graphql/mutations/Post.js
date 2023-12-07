@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { GraphQLError } from 'graphql';
-import { equals, find, pipe, prop } from 'ramda';
+import { equals, find, pipe, prop, findIndex, filter, head } from 'ramda';
 
 const Post = {
-    createPost(parent, args, { db }, info) {
+    createPost(parent, args, { db, pubsub }, info) {
         const theUser = pipe(
             prop('id'),
             equals(parseInt(args.data.author))
@@ -22,9 +22,18 @@ const Post = {
 
         db.posts.push(newPost);
 
+        if (args.data.published) {
+            pubsub.publish('POST', {
+                post: {
+                    mutation: "CREATED",
+                    data: newPost
+                }
+            });
+        }
+
         return newPost;
     },
-    deletePost: (parents, args, { db }, info) => {
+    deletePost: (parents, args, { db, pubsub }, info) => {
         const postId = prop('id')(args);
         const postIndex = findIndex(
             pipe(
@@ -40,26 +49,30 @@ const Post = {
 
         db.posts = filter(post => {
             const match = post.id == postId;
-            // if (match) {
-            //     comments = filter(comment => {
-            //         return comment.post != post.id;
-            //     })(comments);
-            // }   
             return !match;
         })(db.posts);
 
         db.comments = filter(comment => comment.post != args.id)(db.comments);
 
+        if (deletedPost[0].published) {
+            pubsub.publish("POST", {
+                post: {
+                    mutation: "DELETED",
+                    data: deletedPost[0]
+                }
+            });
+        }
         return head(deletedPost);
 
     },
-    updatePost: (parents, args, { db }, info) => {
+    updatePost: (parents, args, { db, pubsub }, info) => {
         const postId = prop('id')(args);
         const findPost = pipe(
             prop('id'),
             id => equals(id, postId)
         );
         const post = find(findPost)(db.posts);
+        const originalPost = { ...post };
         if (!post) {
             return new GraphQLError('Post does not exist');
         }
@@ -76,8 +89,35 @@ const Post = {
             post.published = prop('published', args.data);
         }
 
+        if (typeof data.published === 'boolean') {
+            post.published = args.data.publish;
+
+            if (originalPost.published && !post.published) {
+                pubsub.publish('POST', {
+                    post: {
+                        mutation: 'DELETED',
+                        data: originalPost
+                    }
+                });
+            } else if (!originalPost.published && post.published) {
+                pubsub.publish('POST', {
+                    post: {
+                        mutation: 'CREATED',
+                        data: post
+                    }
+                });
+            }
+        } else if (post.published) {
+            pubsub.publish("POST", {
+                post: {
+                    mutation: "UPDATED",
+                    data: post
+                }
+            });
+        }
+
         return post;
     }
-}
+};
 
 export { Post as default };

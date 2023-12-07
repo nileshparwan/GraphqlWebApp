@@ -1,4 +1,4 @@
-import { equals, pipe, prop } from "ramda";
+import { equals, pipe, prop, find } from "ramda";
 
 const Comment = {
     author(parent, args, { db }, info) {

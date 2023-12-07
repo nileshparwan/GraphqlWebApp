@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { GraphQLError } from 'graphql';
-import { equals, find, pipe, prop, where } from 'ramda';
+import { equals, find, pipe, prop, where, any } from 'ramda';
 
 const Comment = {
-    createComment(parent, args, { db }, info) {
+    createComment(parent, args, { db, pubsub }, info) {
         const autherId = prop('author')(args.data);
         const postId = prop('post')(args.data);
 
@@ -28,10 +28,15 @@ const Comment = {
         };
 
         db.comments.push(newComment);
-
+        pubsub.publish(`COMMENT`, {
+            comment: {
+                mutation: "CREATED",
+                data: newComment
+            }
+        });
         return newComment;
     },
-    deleteComment: (parent, args, { db }, info) => {
+    deleteComment: (parent, args, { db, pubsub }, info) => {
         const commentId = prop('id')(args);
         const commentIndex = findIndex(
             pipe(
@@ -44,9 +49,15 @@ const Comment = {
             throw new GraphQLError("Couldn't find the comment");
         }
         const deletedComment = db.comments.splice(commentIndex, 1);
+        pubsub.publish(`COMMENT`, {
+            comment: {
+                mutation: "DELETED",
+                data: head(deletedComment)
+            }
+        });
         return head(deletedComment);
     },
-    updateComment: (parent, args, { db }, info) => {
+    updateComment: (parent, args, { db, pubsub }, info) => {
         const commentId = prop('id')(args);
         const findComment = pipe(
             prop('id'),
@@ -59,6 +70,12 @@ const Comment = {
         if (typeof prop('text')(args.data) === 'string') {
             comment.text = prop('text')(args.data);
         }
+        pubsub.publish(`COMMENT`, {
+            comment: {
+                mutation: "UPDATED",
+                data: comment
+            }
+        });
         return comment;
     }
 };

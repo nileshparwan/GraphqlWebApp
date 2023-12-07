@@ -1,5 +1,7 @@
-import { createSchema, createYoga } from 'graphql-yoga';
+import { createSchema, createYoga, createPubSub } from 'graphql-yoga';
 import db from '../db';
+
+const pubsub = createPubSub()
 
 export const graphqlSchema = ({ typeDefs, resolvers, logging = false }) => {
     return createYoga({
@@ -9,9 +11,11 @@ export const graphqlSchema = ({ typeDefs, resolvers, logging = false }) => {
         }),
         context() {
             return {
-                db
+                db,
+                pubsub
             };
         },
         logging,
+        graphiql: true
     });
 };
